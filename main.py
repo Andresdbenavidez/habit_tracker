@@ -2,6 +2,23 @@ import mysql.connector
 from mysql.connector import Error
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+DATABASE_URL = "mysql+mysqlconnector://root:root@localhost:3306/habit_tracker_db"
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+class HabitoModel(Base):
+    __tablename__ = "habitos"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    nombre = Column(String(255), nullable=False)
+    racha = Column(Integer, default=0)
+
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI(
     title="Habit Tracker API",
@@ -17,7 +34,7 @@ def conectar_base_datos():
         conexion = mysql.connector.connect(
             host = "localhost",
             user = "root",
-            password = "qwerty"
+            password = "root"
         )
         cursor = conexion.cursor()
 
